@@ -1,11 +1,11 @@
 const express = require('express');
 const User = require('../models/User');
-const { adminAuth } = require('../middleware/auth');
+const { auth, isAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
 // Get all users (admin only)
-router.get('/users', adminAuth, async (req, res) => {
+router.get('/users', [auth, isAdmin], async (req, res) => {
   try {
     const users = await User.find({ role: 'user' })
       .select('-password')
@@ -19,7 +19,7 @@ router.get('/users', adminAuth, async (req, res) => {
 });
 
 // Update user status (admin only)
-router.patch('/users/:id', adminAuth, async (req, res) => {
+router.patch('/users/:id', [auth, isAdmin], async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -56,7 +56,7 @@ router.patch('/users/:id', adminAuth, async (req, res) => {
 });
 
 // Get admin dashboard stats
-router.get('/stats', adminAuth, async (req, res) => {
+router.get('/stats', [auth, isAdmin], async (req, res) => {
   try {
     const totalUsers = await User.countDocuments({ role: 'user' });
     const pendingUsers = await User.countDocuments({ role: 'user', status: 'pending' });
