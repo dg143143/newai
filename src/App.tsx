@@ -8,7 +8,7 @@ import { MainApp } from './components/MainApp';
 type View = 'login' | 'register' | 'admin' | 'main';
 
 function AppContent() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
   const [currentView, setCurrentView] = useState<View>('login');
 
   useEffect(() => {
@@ -24,6 +24,14 @@ function AppContent() {
       setCurrentView('login');
     }
   }, [isAuthenticated, user]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading application...</div>
+      </div>
+    );
+  }
 
   const renderView = () => {
     switch (currentView) {
